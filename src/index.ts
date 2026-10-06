@@ -21,6 +21,13 @@ const projects = [
     colors: ["#ea580c", "#fb923c"],
   },
   {
+    name: "Cann Finances",
+    description: "Private family finances, spending and wealth tracking.",
+    href: "https://finances.mikecann.app",
+    icon: "💰",
+    colors: ["#365e52", "#82b09d"],
+  },
+  {
     name: "StashIt",
     description: "A home for useful things worth keeping.",
     href: "https://stashit.mikecann.app",
@@ -28,8 +35,8 @@ const projects = [
     colors: ["#059669", "#34d399"],
   },
   {
-    name: "Wolfram Physics Notes",
-    description: "Notes and research on the Wolfram Physics Project.",
+    name: "Build Your Own Universe",
+    description: "An interactive, poke-everything tour of the Wolfram Physics Project.",
     href: "https://physics.mikecann.app",
     icon: "🪐",
     colors: ["#be123c", "#fb7185"],
