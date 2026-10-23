@@ -1,4 +1,4 @@
-import { APP_STORE_LIVE, apps, elsewhere, type PrivateApp, type PublicApp } from "./apps";
+import { APP_STORE_LIVE, apps, elsewhere, isCard, type CardApp, type PrintApp } from "./apps";
 import { escapeHtml, slug } from "./html";
 import { styles } from "./styles";
 
@@ -12,13 +12,13 @@ function icon(src: string | undefined, className: string): string {
   return src ? `<img class="${className}" src="${escapeHtml(src)}" width="64" height="64" alt="">` : "";
 }
 
-function photo(app: PublicApp, eager: boolean): string {
+function photo(app: PrintApp, eager: boolean): string {
   const { src, width, height, alt } = app.image;
   const loading = eager ? `fetchpriority="high"` : `loading="lazy"`;
   return `<img src="${escapeHtml(src)}" width="${width}" height="${height}" alt="${escapeHtml(alt)}" ${loading} decoding="async">`;
 }
 
-function appStoreBadge(app: PublicApp): string {
+function appStoreBadge(app: PrintApp): string {
   if (!app.appStore) return "";
   const apple = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.960-1.040-2.040.027-3.910 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.090 1.013 1.454 2.208 3.090 3.792 3.039 1.520-.065 2.090-.987 3.935-.987 1.831 0 2.350.987 3.960.948 1.637-.026 2.676-1.480 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.220-4.857-.026-3.040 2.480-4.494 2.597-4.559-1.429-2.090-3.623-2.324-4.390-2.376-2-.156-3.675 1.090-4.610 1.090zM15.530 3.830c.843-1.012 1.400-2.427 1.245-3.830-1.207.052-2.662.805-3.532 1.818-.780.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>`;
   const ring = `<svg class="ring" viewBox="0 0 200 80" preserveAspectRatio="none" aria-hidden="true"><path d="M150 7C116 1 52 2 24 12 6 19 1 34 6 50c6 19 42 27 94 27 50 0 88-7 95-27 6-17-4-33-30-41-22-7-58-8-84-5"/></svg>`;
@@ -28,7 +28,7 @@ function appStoreBadge(app: PublicApp): string {
   return `<span class="badge-wrap">${badge}${ring}</span>`;
 }
 
-function featuredPrint(app: PublicApp): string {
+function featuredPrint(app: PrintApp): string {
   return `
           <div class="print hero a-${slug(app.name)} ${app.print.stuck.with}">
             <div class="hero-in">
@@ -49,7 +49,7 @@ function featuredPrint(app: PublicApp): string {
           </div>`;
 }
 
-function print(app: PublicApp, index: number): string {
+function print(app: PrintApp, index: number): string {
   if (app.featured) return featuredPrint(app);
   return `
           <a class="print a-${slug(app.name)} ${app.print.stuck.with}" href="${escapeHtml(app.href)}">
@@ -64,11 +64,13 @@ function print(app: PublicApp, index: number): string {
           </a>`;
 }
 
-function card(app: PrivateApp): string {
+function card(app: CardApp): string {
+  // Locked cards say so. Ones anyone can open get the same arrow as the prints.
+  const corner = app.status === "private" ? `<span class="lock">${lock}Private</span>` : arrow;
   return `
-          <li>
+          <li class="${app.status}">
             <a class="card a-${slug(app.name)}" href="${escapeHtml(app.href)}">
-              <div class="card-head">${icon(app.icon, "pico")}<h3>${escapeHtml(app.name)}</h3><span class="lock">${lock}Private</span></div>
+              <div class="card-head">${icon(app.icon, "pico")}<h3>${escapeHtml(app.name)}</h3>${corner}</div>
               <p>${escapeHtml(app.description)}</p>
             </a>
           </li>`;
@@ -81,8 +83,8 @@ function tag(link: { name: string; href: string }): string {
           <li><a class="tag" href="${escapeHtml(link.href)}">${cord}<span class="tag-card"><span class="el-name">${escapeHtml(link.name)}</span><span class="el-url">${escapeHtml(label)}<svg aria-hidden="true"><use href="#arrow"/></svg></span></span></a></li>`;
 }
 
-const publicApps = apps.filter((app): app is PublicApp => app.status !== "private");
-const privateApps = apps.filter((app): app is PrivateApp => app.status === "private");
+const printApps = apps.filter((app): app is PrintApp => !isCard(app));
+const cardApps = apps.filter(isCard);
 
 /** The page's only stylesheet. index.ts hashes it for the CSP. */
 export const css = styles(apps);
@@ -128,16 +130,16 @@ export const html = `<!doctype html>
         <div class="section-head">
           <h2 id="open-apps">Things you can use</h2>
         </div>
-        <div class="board">${publicApps.map(print).join("")}
+        <div class="board">${printApps.map(print).join("")}
         </div>
       </section>
 
-      <section aria-labelledby="private-apps">
+      <section aria-labelledby="personal-apps">
         <div class="section-head quiet">
-          <h2 id="private-apps">Just for me and the family</h2>
-          <span class="section-note">${lock}Needs a sign-in</span>
+          <h2 id="personal-apps">Just for me and the family</h2>
+          <span class="section-note">${lock}The locked ones need a sign-in.</span>
         </div>
-        <ul class="cards">${privateApps.map(card).join("")}
+        <ul class="cards">${cardApps.map(card).join("")}
         </ul>
       </section>
 

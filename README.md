@@ -14,8 +14,8 @@ npm run check   # asset names, types and a deploy dry run
 
 Add one entry to `apps` in `src/apps.ts`. The page and its per-app CSS are generated from that list.
 
-- Public apps (`status: "open"`) get a polaroid print. Give them a `kind`, an `image` and a `print` (its desktop width out of 12 columns, tilt, tape or pin colour and kind-sticker colours). Each row of prints should add up to 12 columns.
-- Private apps (`status: "private"`) get a pinned index card with their `icon`.
+- Apps for other people (`status: "open"`, or `"soon"` while they wait on the App Store) get a polaroid print in "Things you can use". Give them a `kind`, an `image` and a `print` (its desktop width out of 12 columns, tilt, tape or pin colour and kind-sticker colours). Each row of prints should add up to 12 columns.
+- Apps just for me and the family get a pinned index card with their `icon`. Use `status: "personal"` if anyone can open it (the card gets an arrow) or `status: "private"` if it needs a sign-in (the card gets a lock). List the personal ones first: on desktop they share the top row of cards, with the private ones three to a row underneath.
 - Links in the Elsewhere section are in `elsewhere`, in the same file.
 
 Poddle's App Store badge is plain "Coming soon" text until `APP_STORE_LIVE` in `src/apps.ts` is set to `true`.

@@ -13,7 +13,7 @@ export interface Image {
   alt: string;
 }
 
-/** How a public app's print sits on the board. */
+/** How an app's print sits on the board. */
 export interface Print {
   /** Width on desktop in columns of a 12-column grid. Each row of prints should add up to 12. */
   span: number;
@@ -31,11 +31,12 @@ interface BaseApp {
   name: string;
   href: string;
   description: string;
-  /** Square, shown at 28 to 38px. Optional on prints, where the photo can do the job (Mike Pod). */
+  /** Square, shown at 28 to 38px. Optional on prints, where the photo can do the job. */
   icon?: string;
 }
 
-export interface PublicApp extends BaseApp {
+/** Made for other people to use, so it gets a polaroid print with a screenshot in "Things you can use". */
+export interface PrintApp extends BaseApp {
   /** "soon" means it's waiting on the App Store. */
   status: "open" | "soon";
   kind: string;
@@ -46,15 +47,23 @@ export interface PublicApp extends BaseApp {
   appStore?: string;
 }
 
-/** Needs a sign-in, so it gets an index card with its icon instead of a screenshot of a login page. */
-export interface PrivateApp extends BaseApp {
-  status: "private";
+/** Just for me and the family, so it gets a pinned index card with its icon in the section below the board. */
+export interface CardApp extends BaseApp {
+  /**
+   * "personal" means anyone can open it, so the card links straight through with an arrow.
+   * "private" needs a sign-in, so the card gets a lock (and no screenshot of a login page).
+   */
+  status: "personal" | "private";
   icon: string;
   /** Colour of the drawing pin. */
   pin?: string;
 }
 
-export type App = PublicApp | PrivateApp;
+export type App = PrintApp | CardApp;
+
+export function isCard(app: App): app is CardApp {
+  return app.status === "personal" || app.status === "private";
+}
 
 export const apps: App[] = [
   {
@@ -70,13 +79,14 @@ export const apps: App[] = [
     print: { span: 8, tilt: -1.1, stuck: { with: "tape-corners", color: "#ee7b5c" } },
   },
   {
-    name: "Mike Pod",
-    href: "https://podcast.mikecann.app",
+    name: "StashIt",
+    href: "https://stashit.mikecann.app",
     status: "open",
-    kind: "Podcast",
-    description: "Deep research for a curious mind.",
-    image: { src: "/assets/shots/mike-pod.d78cb99b.webp", width: 900, height: 900, alt: "Mike Pod artwork: a vintage microphone inside a web of glowing nodes" },
-    print: { span: 4, tilt: 2.4, nudge: { top: 30, left: -62 }, stuck: { with: "tape-top", color: "#f5cf4f" }, sticker: { background: "#f5cf4f", text: "#18121f" } },
+    kind: "App",
+    description: "A home for useful things worth keeping.",
+    icon: "/assets/icons/stashit.6aad896b.webp",
+    image: { src: "/assets/shots/stashit.08c53704.webp", width: 900, height: 900, alt: "An illustrated treasure chest overflowing with books and scrolls, above the StashIt wordmark" },
+    print: { span: 4, tilt: 2.4, nudge: { top: 30, left: -62 }, stuck: { with: "tape-top", color: "#f5cf4f" }, sticker: { background: "#a8312a", text: "#fff6e6" } },
   },
   {
     name: "Wormquake",
@@ -99,24 +109,14 @@ export const apps: App[] = [
     print: { span: 5, tilt: -1.8, nudge: { top: 44, left: -18 }, stuck: { with: "tape-top", color: "#f3b01c" }, sticker: { background: "#15120b", text: "#f3b01c" } },
   },
   {
-    name: "Keel Retreat Pool",
-    href: "https://pool.mikecann.app",
+    name: "The Convex 100",
+    href: "https://the-convex-100-language-challenge.mikecann.app",
     status: "open",
-    kind: "House project",
-    description: "The 3D model and renders for our pool and alfresco build.",
-    icon: "/assets/icons/pool.4152b6c2.svg",
-    image: { src: "/assets/shots/pool.5508ea15.webp", width: 960, height: 640, alt: "3D render of the alfresco at night, with a fire pit, a spa and people sitting on the steps" },
-    print: { span: 5, tilt: -1.4, nudge: { top: 10 }, stuck: { with: "tape-left", color: "#99afc9" }, sticker: { background: "#172225", text: "#dfe8f2" } },
-  },
-  {
-    name: "StashIt",
-    href: "https://stashit.mikecann.app",
-    status: "open",
-    kind: "App",
-    description: "A home for useful things worth keeping.",
-    icon: "/assets/icons/stashit.6aad896b.webp",
-    image: { src: "/assets/shots/stashit.08c53704.webp", width: 900, height: 900, alt: "An illustrated treasure chest overflowing with books and scrolls, above the StashIt wordmark" },
-    print: { span: 4, tilt: 1.7, nudge: { top: 54 }, stuck: { with: "tape-top", color: "#f0a35e" }, sticker: { background: "#a8312a", text: "#fff6e6" } },
+    kind: "Challenge",
+    description: "Convex in 100 programming languages, from Fortran to Mojo.",
+    icon: "/assets/icons/convex100.39e48d08.webp",
+    image: { src: "/assets/shots/convex100.55a49801.webp", width: 1120, height: 700, alt: "The Convex 100 Language Challenge homepage with its dotted 100 logo" },
+    print: { span: 5, tilt: -1.4, nudge: { top: 12 }, stuck: { with: "tape-left", color: "#c77dd6" }, sticker: { background: "#8d2676", text: "#fff" } },
   },
   {
     name: "Magic Jev Ball",
@@ -126,17 +126,7 @@ export const apps: App[] = [
     description: "A Magic 8 Ball that picks the answer that fits your question.",
     icon: "/assets/icons/magic-jev.51d28e0e.svg",
     image: { src: "/assets/shots/magic-jev.854fdd83.webp", width: 900, height: 900, alt: "A glossy black 8-ball under the Magic Jev Ball title and a box to type a question" },
-    print: { span: 3, tilt: -2.2, nudge: { top: -6, left: -26 }, stuck: { with: "pin", color: "#3b3bb3" }, sticker: { background: "#f5c46a", text: "#12121f" } },
-  },
-  {
-    name: "The Convex 100",
-    href: "https://the-convex-100-language-challenge.mikecann.app",
-    status: "open",
-    kind: "Challenge",
-    description: "Convex in 100 programming languages, from Fortran to Mojo.",
-    icon: "/assets/icons/convex100.39e48d08.webp",
-    image: { src: "/assets/shots/convex100.55a49801.webp", width: 1120, height: 700, alt: "The Convex 100 Language Challenge homepage with its dotted 100 logo" },
-    print: { span: 6, tilt: 1.2, nudge: { top: 8 }, stuck: { with: "tape-right", color: "#c77dd6" }, sticker: { background: "#8d2676", text: "#fff" } },
+    print: { span: 3, tilt: 2.1, nudge: { top: 56, left: -20 }, stuck: { with: "pin", color: "#3b3bb3" }, sticker: { background: "#f5c46a", text: "#12121f" } },
   },
   {
     name: "Questions",
@@ -146,7 +136,23 @@ export const apps: App[] = [
     description: "Live Q&A for talks.",
     icon: "/assets/icons/questions.f194e924.svg",
     image: { src: "/assets/shots/questions.3d281862.webp", width: 1000, height: 750, alt: "The Join a Q&A card, with a box for the session code and a Join button" },
-    print: { span: 6, tilt: -1.3, nudge: { top: 38, right: 26, left: -6 }, stuck: { with: "pin", color: "#1aa784" }, sticker: { background: "#7cf0c8", text: "#0f1217" } },
+    print: { span: 4, tilt: -1.2, nudge: { top: 18, left: -6 }, stuck: { with: "tape-right", color: "#5fd4ad" }, sticker: { background: "#7cf0c8", text: "#0f1217" } },
+  },
+  {
+    name: "Mike Pod",
+    href: "https://podcast.mikecann.app",
+    status: "personal",
+    description: "Deep research for a curious mind.",
+    icon: "/assets/icons/mike-pod.4eb29178.webp",
+    pin: "#d9a521",
+  },
+  {
+    name: "Keel Retreat Pool",
+    href: "https://pool.mikecann.app",
+    status: "personal",
+    description: "The 3D model and renders for our pool and alfresco build.",
+    icon: "/assets/icons/pool.4152b6c2.svg",
+    pin: "#3d6f9a",
   },
   {
     name: "Cannvas",

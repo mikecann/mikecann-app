@@ -1,4 +1,4 @@
-import type { App } from "./apps";
+import { isCard, type App } from "./apps";
 import { slug } from "./html";
 
 // The "B4 Scrapbook" look: a dotted paper desk with polaroid prints, washi tape, pins,
@@ -254,7 +254,7 @@ section { margin-top: 112px; }
   letter-spacing: -.012em;
 }
 .go { flex: none; width: 13px; height: 13px; margin-left: auto; color: var(--print-mut); transition: transform .35s var(--ease), color .35s var(--ease); }
-.print:hover .go { transform: translate(2px, -2px); color: var(--print-ink); }
+.print:hover .go, .card:hover .go { transform: translate(2px, -2px); color: var(--print-ink); }
 .cap p { margin-top: 7px; color: var(--print-mut); font-size: 15.5px; line-height: 1.5; max-width: 34em; }
 
 /* Washi tape: translucent, faintly striped, with torn zigzag ends. ::before and ::after are the two strips. */
@@ -377,10 +377,12 @@ a.badge { z-index: 4; }
 }
 .ring path { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 
-/* ---------- Private apps: pinned index cards ---------- */
+/* ---------- Personal apps: pinned index cards ---------- */
+/* Six columns so the open cards, which come first, can share the top row at half width
+   and the locked ones sit three to a row under them. */
 .cards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 40px 36px;
   list-style: none;
   margin: 0;
@@ -402,11 +404,14 @@ a.badge { z-index: 4; }
   transform: rotate(var(--r, 0deg));
   transition: transform .45s var(--ease), box-shadow .45s var(--ease);
 }
-.cards li:nth-child(3n + 1) .card { --r: -1deg; }
-.cards li:nth-child(3n + 2) .card { --r: .7deg; }
-.cards li:nth-child(3n + 3) .card { --r: -.5deg; }
-.cards li:nth-child(4) .card { --r: .9deg; }
-.cards li:nth-child(6) .card { --r: 1.2deg; }
+.cards li { grid-column: span 2; }
+.cards .personal { grid-column: span 3; }
+.cards li:nth-child(odd) .card { --r: -.8deg; }
+.cards li:nth-child(even) .card { --r: .7deg; }
+.cards li:nth-child(1) .card { --r: -1.1deg; }
+.cards li:nth-child(4) .card { --r: -.4deg; }
+.cards li:nth-child(5) .card { --r: 1deg; }
+.cards li:nth-child(6) .card { --r: .5deg; }
 .card:hover, .card:focus-visible { z-index: 2; transform: rotate(0deg) translateY(-4px); box-shadow: var(--shadow-up), inset 0 0 0 1px var(--print-edge); }
 .card::before {
   content: "";
@@ -524,6 +529,7 @@ footer { margin-top: 104px; padding: 0 0 72px; text-align: center; }
   .board > :nth-child(odd of .print:not(.hero)) { margin-top: 30px; }
   .hero-copy { padding: 32px 0 34px 32px; }
   .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cards li, .cards .personal { grid-column: auto; }
   .tags { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
@@ -584,7 +590,7 @@ footer { margin-top: 104px; padding: 0 0 72px; text-align: center; }
   /* Keep everything where it is; hover and focus only lift the shadow. */
   .print:hover, .print:focus-visible, .print:has(.stretch:focus-visible), .card:hover, .card:focus-visible { transform: rotate(var(--r, 0deg)); }
   .tag:hover, .tag:focus-visible { transform: rotate(var(--r, 0deg)); }
-  .print:hover .go, .tag:hover .el-url svg { transform: none; }
+  .print:hover .go, .card:hover .go, .tag:hover .el-url svg { transform: none; }
 }
 `;
 
@@ -592,7 +598,7 @@ footer { margin-top: 104px; padding: 0 0 72px; text-align: center; }
 function appStyles(apps: App[]): string {
   const rules = apps.map((app) => {
     const cls = `.a-${slug(app.name)}`;
-    if (app.status === "private") return app.pin ? `${cls} { --pin: ${app.pin}; }` : "";
+    if (isCard(app)) return app.pin ? `${cls} { --pin: ${app.pin}; }` : "";
     const { span, tilt, nudge, stuck, sticker } = app.print;
     const vars = [`--r: ${tilt}deg`, `${stuck.with === "pin" ? "--pin" : "--tape"}: ${stuck.color}`];
     if (sticker) vars.push(`--k-bg: ${sticker.background}`, `--k-fg: ${sticker.text}`);
