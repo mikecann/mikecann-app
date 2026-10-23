@@ -4,6 +4,14 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-08-21",
   "compatibility_flags": ["nodejs_compat"],
+  // Images and icons live in public/assets. The Worker runs first for every request so the
+  // www redirect, 405s, 404s and long cache headers apply to assets too; it hands /assets/*
+  // to the ASSETS binding.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
   "routes": [
     {
       "pattern": "mikecann.app",

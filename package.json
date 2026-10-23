@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "check": "tsc --noEmit && wrangler deploy --dry-run",
+    "assets": "node scripts/hash-assets.mjs",
+    "check": "node scripts/hash-assets.mjs --check && wrangler types && tsc --noEmit && wrangler deploy --dry-run",
     "deploy": "wrangler deploy",
     "dev": "wrangler dev"
   },
