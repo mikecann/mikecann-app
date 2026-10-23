@@ -10,7 +10,10 @@ async function buildPageHeaders(): Promise<Record<string, string>> {
   const styleHash = btoa(Array.from(new Uint8Array(digest), (byte) => String.fromCharCode(byte)).join(""));
   return {
     "Cache-Control": "public, max-age=300",
-    "Content-Security-Policy": `default-src 'none'; style-src 'sha256-${styleHash}'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`,
+    // The only script is the Cloudflare Web Analytics beacon, which Cloudflare injects into the
+    // HTML on the way out. It loads from static.cloudflareinsights.com and reports back to this
+    // site's own /cdn-cgi/rum, hence script-src for that host and connect-src 'self'.
+    "Content-Security-Policy": `default-src 'none'; script-src https://static.cloudflareinsights.com; connect-src 'self'; style-src 'sha256-${styleHash}'; img-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`,
     "Content-Type": "text/html; charset=utf-8",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "X-Content-Type-Options": "nosniff",
