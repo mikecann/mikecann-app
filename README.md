@@ -18,7 +18,7 @@ Add one entry to `apps` in `src/apps.ts`. The page and its per-app CSS are gener
 - Apps just for me and the family get a pinned index card with their `icon`. Use `status: "personal"` if anyone can open it (the card gets an arrow) or `status: "private"` if it needs a sign-in (the card gets a lock). List the personal ones first: on desktop they share the top row of cards, with the private ones three to a row underneath.
 - Links in the Elsewhere section are in `elsewhere`, in the same file.
 
-Poddle's App Store badge is plain "Coming soon" text until `APP_STORE_LIVE` in `src/apps.ts` is set to `true`.
+Poddle's App Store badge links to the App Store while `APP_STORE_LIVE` in `src/apps.ts` is `true`, and is plain "Coming soon" text when it's `false`.
 
 ## Images
 

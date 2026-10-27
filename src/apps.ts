@@ -1,9 +1,9 @@
 // Everything the page lists. Add an app by adding one entry to `apps`; the page and its CSS are generated from it.
 // Images live in public/assets. After adding or changing one, run `npm run assets` to give it a hashed filename.
 
-// Flip to true once Apple releases Poddle. The App Store link 404s until then,
-// so for now the badge is plain "Coming soon" text rather than a link.
-export const APP_STORE_LIVE = false;
+// Poddle went out on the App Store on 27 Oct 2026. Set this to false and its badge
+// goes back to plain "Coming soon" text rather than a link.
+export const APP_STORE_LIVE = true;
 const PODDLE_APP_STORE_URL = "https://apps.apple.com/app/id6825613455";
 
 export interface Image {
