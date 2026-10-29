@@ -12,6 +12,8 @@ npm run check   # asset names, types and a deploy dry run
 
 ## Adding an app
 
+First check it belongs here. This page is for apps you open in a browser or get from the App Store, including the ones just for me and the family. Little tools that run on my own Mac, shared as a repo for people to fork and make their own, go on [mikerosoft.app](https://mikerosoft.app) ([repo](https://github.com/mikecann/mikerosoft.app)) instead. The two sites link to each other: Mikerosoft is in Elsewhere here, and Mike's Apps is a shortcut on Mikerosoft's desktop.
+
 Add one entry to `apps` in `src/apps.ts`. The page and its per-app CSS are generated from that list.
 
 - Apps for other people (`status: "open"`, or `"soon"` while they wait on the App Store) get a polaroid print in "Things you can use". Give them a `kind`, an `image` and a `print` (its desktop width out of 12 columns, tilt, tape or pin colour and kind-sticker colours). Each row of prints should add up to 12 columns.
